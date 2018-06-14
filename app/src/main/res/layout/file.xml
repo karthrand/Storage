@@ -1,11 +1,56 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center">
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:layout_gravity="top">
 
-    <TextView
-        android:text="FileActivity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+	<LinearLayout
+		android:orientation="horizontal"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_centerHorizontal="true"
+		android:id="@+id/fileLinearLayout1">
 
-</LinearLayout>
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="保存内容:"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:id="@+id/fileTextView1"
+			android:textStyle="bold"
+			android:textSize="15sp"/>
+
+		<EditText
+			android:layout_width="0dp"
+			android:ems="0"
+			android:layout_height="wrap_content"
+			android:layout_weight="1.0"
+			android:id="@+id/fileEditText1"/>
+
+		<Button
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="保存"
+			android:id="@+id/fileButton1"
+			android:textSize="15sp"/>
+
+	</LinearLayout>
+
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="读取"
+		android:layout_below="@id/fileLinearLayout1"
+		android:textSize="15sp"
+		android:id="@+id/fileButton2"/>
+
+	<TextView
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:text="Text"
+		android:layout_below="@id/fileButton2"
+		android:id="@+id/fileTextView2"/>
+
+</RelativeLayout>
+
