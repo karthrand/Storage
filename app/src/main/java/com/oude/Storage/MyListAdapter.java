@@ -17,8 +17,8 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder
         public ViewHolder(View view) {
             super(view);
             MyListView = view;
-            MyListImage = (ImageView) view.findViewById(R.id.list_image);
-            MyListName = (TextView) view.findViewById(R.id.list_name);
+            MyListImage = view.findViewById(R.id.list_image);
+            MyListName = view.findViewById(R.id.list_name);
         }
     }
 
@@ -39,6 +39,16 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder
                         case 0:
                             Intent intent = new Intent(v.getContext(),FileActivity.class);
                             v.getContext().startActivity(intent);
+
+                            break;
+                        case 1:
+                            Intent intent1 = new Intent(v.getContext(),SharedPreferences.class);
+                            v.getContext().startActivity(intent1);
+
+                            break;
+                        case 2:
+                            Intent intent2 = new Intent(v.getContext(),DatabaseActivity.class);
+                            v.getContext().startActivity(intent2);
 
                             break;
                         default:

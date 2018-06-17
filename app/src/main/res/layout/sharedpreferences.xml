@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:layout_gravity="top">
+
+	<LinearLayout
+		android:orientation="horizontal"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_centerHorizontal="true"
+		android:id="@+id/spLinearLayout1">
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="字符数据:"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:id="@+id/spTextView1"
+			android:textStyle="bold"
+			android:textSize="15sp"/>
+
+		<EditText
+			android:layout_width="0dp"
+			android:ems="0"
+			android:layout_height="wrap_content"
+			android:layout_weight="1.0"
+			android:inputType="text"
+			android:id="@+id/spEditText1"/>
+
+		<Button
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="保存"
+			android:id="@+id/spButton1"
+			android:textSize="15sp"/>
+
+	</LinearLayout>
+
+	<LinearLayout
+		android:orientation="horizontal"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_centerHorizontal="true"
+		android:layout_below="@id/spLinearLayout1"
+		android:id="@+id/spLinearLayout2">
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="整型数据:"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:id="@+id/spTextView2"
+			android:textStyle="bold"
+			android:textSize="15sp"/>
+
+		<EditText
+			android:layout_width="0dp"
+			android:ems="0"
+			android:layout_height="wrap_content"
+			android:inputType="number"
+			android:layout_weight="1.0"
+			android:id="@+id/spEditText2"/>
+
+		<Button
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="保存"
+			android:id="@+id/spButton2"
+			android:textSize="15sp"/>
+
+	</LinearLayout>
+
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="读取字符"
+		android:layout_below="@id/spLinearLayout2"
+		android:textSize="15sp"
+		android:id="@+id/spButton3"/>
+
+	<TextView
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:text="Text"
+		android:layout_below="@id/spButton3"
+		android:id="@+id/spTextView3"/>
+
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="读取整型"
+		android:layout_toRightOf="@id/spButton3"
+		android:layout_below="@id/spLinearLayout2"
+		android:id="@+id/spButton4"/>
+
+</RelativeLayout>
+

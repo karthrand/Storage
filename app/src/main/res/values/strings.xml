@@ -3,5 +3,8 @@
 
     <string name="app_name">Storage</string>
     <string name="file">File</string>
+    <string name="sp">SharedPreferences</string>
+    <string name="db">Database</string>
+    
 
 </resources>

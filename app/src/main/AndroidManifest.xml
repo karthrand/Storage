@@ -18,6 +18,12 @@
             </intent-filter>
         </activity>
         <activity 
+            android:name=".DatabaseActivity"
+            android:label="@string/db"/>
+        <activity 
+            android:name=".SharedPreferences"
+            android:label="@string/sp"/>
+        <activity 
             android:name=".FileActivity"
             android:label="@string/file"/>
     </application>
