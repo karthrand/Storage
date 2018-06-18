@@ -40,9 +40,9 @@ public class MyDatabaseHelper extends SQLiteOpenHelper
         //如果需要更新，先删除已存在的表，,否则报错
         //然后再在DatabaseActivity如同创建一样调用，版本需要大于原来数据库版本
         //当然，更新肯定是需要有新的，比如item表的格式之类变化或者直接新增表，这里不进行演示
-        p1.execSQL("drop table if exists item");
+        //p1.execSQL("drop table if exists item");
         //调用onCreate()方法，所以有更新在onCreate()下改变
-        onCreate(p1);
+        //onCreate(p1);
     }
 
 }
