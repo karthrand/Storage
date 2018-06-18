@@ -9,7 +9,7 @@
 	<View
 		android:layout_width="match_parent"
 		android:layout_height="1dp"
-		android:background="#FF000000"
+		android:background="#99CCFF"
 		android:id="@+id/itemdetailsView1"/>
 
 	<LinearLayout
@@ -29,10 +29,9 @@
 			android:textSize="15sp"/>
 
 		<EditText
-			android:layout_width="0dp"
-			android:ems="0"
+			android:layout_width="wrap_content"
+			android:ems="5"
 			android:layout_height="wrap_content"
-			android:layout_weight="1.0"
 			android:inputType="text"
 			android:id="@+id/item_name"/>
 
@@ -55,12 +54,11 @@
 			android:textSize="15sp"/>
 
 		<EditText
-			android:layout_width="0dp"
-			android:ems="0"
+			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_weight="1.0"
 			android:inputType="text"
-			android:id="@+id/item_type"/>
+			android:id="@+id/item_type"
+			android:ems="5"/>
 
 	</LinearLayout>
 
@@ -81,12 +79,19 @@
 			android:textSize="15sp"/>
 
 		<EditText
-			android:layout_width="0dp"
-			android:ems="0"
+			android:layout_width="wrap_content"
+			android:ems="5"
 			android:layout_height="wrap_content"
 			android:inputType="numberDecimal"
-			android:layout_weight="1.0"
 			android:id="@+id/item_price"/>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="金币"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textSize="15sp"
+			android:textStyle="bold"/>
 
 	</LinearLayout>
 
@@ -107,12 +112,19 @@
 			android:textSize="15sp"/>
 
 		<EditText
-			android:layout_width="0dp"
-			android:ems="0"
+			android:layout_width="wrap_content"
+			android:ems="5"
 			android:layout_height="wrap_content"
 			android:inputType="numberDecimal"
-			android:layout_weight="1.0"
 			android:id="@+id/item_weight"/>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="磅"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textSize="15sp"
+			android:textStyle="bold"/>
 
 	</LinearLayout>
 
@@ -133,35 +145,13 @@
 			android:textSize="15sp"/>
 
 		<EditText
-			android:layout_width="0dp"
+			android:layout_width="match_parent"
 			android:ems="0"
 			android:layout_height="wrap_content"
-			android:layout_weight="1.0"
 			android:inputType="text|textMultiLine"
 			android:id="@+id/item_explain"/>
 
 	</LinearLayout>
-
-	<Button
-        style = "?android:attr/borderlessButtonStyle"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="@string/cancel"
-		android:layout_below="@id/itemdetailsLinearLayout5"
-		android:layout_alignParentRight="true"
-		android:layout_marginRight="5dp"
-		android:id="@+id/cancel"
-		android:background="@drawable/button_selector"/>
-
-	<Button
-        style = "?android:attr/borderlessButtonStyle"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="@string/modify"
-		android:layout_below="@id/itemdetailsLinearLayout5"
-		android:layout_toLeftOf="@id/cancel"
-		android:id="@+id/modify"
-		android:background="@drawable/button_selector"/>
 
 </RelativeLayout>
 
