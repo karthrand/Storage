@@ -26,20 +26,35 @@ import android.util.TypedValue;
 import android.graphics.Typeface;
 import java.util.LinkedList;
 import java.math.BigDecimal;
+import android.support.v4.widget.SwipeRefreshLayout;
 
 public class DatabaseActivity extends AppCompatActivity
 {
+    private DBListAdapter adapter;
+    
     private MyDatabaseHelper itemdb;
     //用item表的name作为筛选条件，因此需要保证item的name的唯一性
     private String item_name,item_type,item_explain;
     private Float item_price,item_weight;
     //存储取出来的item名字
     private List<ItemsList> list = new ArrayList<>();
+    //下拉刷新
+    private SwipeRefreshLayout swipeRefresh;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.database);
+        //下拉刷新绑定控件
+        swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
+        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
+                @Override
+                public void onRefresh()
+                {
+                    refreshItems();
+                }
+            });
+       
         //创建数据库，并指定数据库文件名称和版本，完成初始化
         //数据库文件会自动在/data/data/<package name>/databases/目录下创建
         //如果item.db数据库已创建，不会重复调用MyDatabaseHelper的onCreate()方法创建
@@ -52,7 +67,7 @@ public class DatabaseActivity extends AppCompatActivity
         RecyclerView recycleView = (RecyclerView) findViewById(R.id.databaseRecyclerView1);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recycleView.setLayoutManager(layoutManager);
-        DBListAdapter adapter =new DBListAdapter(list);
+        adapter =new DBListAdapter(list);
         recycleView.setAdapter(adapter);
 
 
@@ -71,7 +86,6 @@ public class DatabaseActivity extends AppCompatActivity
     public class DBListAdapter extends RecyclerView.Adapter<DBListAdapter.ViewHolder>
     {
         private List<ItemsList> mItemsList;
-
         class ViewHolder extends RecyclerView.ViewHolder
         {
             View ItemsView;
@@ -132,6 +146,7 @@ public class DatabaseActivity extends AppCompatActivity
     //获取所有items资源并显示
     private void initItems()
     {
+        list.clear();
         //以读写操作方式打开数据库
         SQLiteDatabase  sqlLite = itemdb.getReadableDatabase();
         //取出数据
@@ -272,6 +287,32 @@ public class DatabaseActivity extends AppCompatActivity
         builder.show();
     }
 
+    
+    private void refreshItems(){
+        new Thread(new Runnable(){
+                @Override
+                public void run()
+                {
+                    try {
+                        //因为本地刷新速度太快看不到效果，延迟下
+                        Thread.sleep(1000);
+                    }catch (InterruptedException e){
+                        e.printStackTrace();
+                    }
+                    runOnUiThread(new Runnable(){
+
+                            @Override
+                            public void run()
+                            {
+                                initItems();
+                                adapter.notifyDataSetChanged();
+                                swipeRefresh.setRefreshing(false);
+                            }
+                    });
+                }
+            
+        }).start();
+    }
 
 
 
