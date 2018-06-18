@@ -44,12 +44,7 @@ public class DatabaseActivity extends Activity
         recycleView.setAdapter(adapter);
 
 
-
-
     }
-
-
-
 
     //RecycleView的Adapter
     public class DBListAdapter extends RecyclerView.Adapter<DBListAdapter.ViewHolder>
@@ -110,7 +105,6 @@ public class DatabaseActivity extends Activity
     }
 
 
-
     //获取所有items资源并显示
     private void initItems()
     {
@@ -144,8 +138,12 @@ public class DatabaseActivity extends Activity
         }
         
         }
-
-
+    
+        
+    //单击后查看详情
+    public void Detail(){
+        
+    }
     
 
 }
