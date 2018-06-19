@@ -27,6 +27,7 @@ import android.graphics.Typeface;
 import java.util.LinkedList;
 import java.math.BigDecimal;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.view.View.OnLongClickListener;
 
 public class DatabaseActivity extends AppCompatActivity
 {
@@ -109,6 +110,7 @@ public class DatabaseActivity extends AppCompatActivity
         {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.itemslist, parent, false);
             final ViewHolder holder = new ViewHolder(view);
+            //点击事件
             holder.ItemsView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v)
@@ -125,6 +127,23 @@ public class DatabaseActivity extends AppCompatActivity
                         }
                     }
                 });
+            //长按事件
+            holder.ItemsView.setOnLongClickListener(new View.OnLongClickListener(){
+
+                    @Override
+                    public boolean onLongClick(View p1)
+                    {
+                        int position = holder.getAdapterPosition();
+                        ItemsList itmsList = mItemsList.get(position);
+                        switch (position)
+                        {
+                            default: DeleteItem(itmsList.getName(),position);
+                                break;
+                        }
+                        return true;
+                    }
+                });
+                
             return holder;
         }
 
@@ -139,6 +158,11 @@ public class DatabaseActivity extends AppCompatActivity
         public int getItemCount()
         {
             return mItemsList.size();
+        }
+        //自定义删除操作
+        public void removeItem(int pos){
+            mItemsList.remove(pos);
+            notifyItemRemoved(pos);
         }
     }
 
@@ -176,6 +200,35 @@ public class DatabaseActivity extends AppCompatActivity
             cursor.close();
         }
 
+    }
+    
+    //长按删除
+    public void DeleteItem(final String deleteName,final int pos){
+        AlertDialog.Builder builder= new AlertDialog.Builder(DatabaseActivity.this);
+        builder.setTitle("删除");
+        builder.setIcon(R.drawable.timg);
+        builder.setMessage("确定删除" + deleteName +"吗？");
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener(){
+
+                @Override
+                public void onClick(DialogInterface p1, int p2)
+                {
+                    //数据库及Recycle中都需要进行删除
+                    final SQLiteDatabase  db = itemdb.getReadableDatabase();
+                    db.delete("item","name=?",new String[]{deleteName});
+                    adapter.removeItem(pos);
+                }
+            });
+            
+            
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener(){
+
+                @Override
+                public void onClick(DialogInterface p1, int p2)
+                {
+                }
+            });
+        builder.show();
     }
 
 
@@ -268,7 +321,7 @@ public class DatabaseActivity extends AppCompatActivity
                         Math.abs(item_weight - sp.getFloat("item_weight", 0)) < 0.00001 &&
                         item_explain.equals(sp.getString("item_explain", "")))
                     {
-                        Toast.makeText(DatabaseActivity.this, "修改操作需要修改任意值！", Toast.LENGTH_SHORT).show();                     
+                        Toast.makeText(DatabaseActivity.this, "请修改至少一个值！", Toast.LENGTH_SHORT).show();                     
                     }
                     else
                     {
@@ -287,7 +340,7 @@ public class DatabaseActivity extends AppCompatActivity
         builder.show();
     }
 
-    
+    //下拉刷新的实现
     private void refreshItems(){
         new Thread(new Runnable(){
                 @Override
@@ -295,7 +348,7 @@ public class DatabaseActivity extends AppCompatActivity
                 {
                     try {
                         //因为本地刷新速度太快看不到效果，延迟下
-                        Thread.sleep(1000);
+                        Thread.sleep(500);
                     }catch (InterruptedException e){
                         e.printStackTrace();
                     }
