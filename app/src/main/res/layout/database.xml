@@ -60,7 +60,9 @@
 			android:layout_height="wrap_content"
 			android:text="查询"
 			android:layout_marginLeft="10dp"
-			android:id="@+id/query"/>
+			android:id="@+id/query"
+			android:textStyle="bold"
+			android:textSize="15sp"/>
 
 		<Button
 			style="?android:attr/borderlessButtonStyle"
@@ -68,7 +70,9 @@
 			android:layout_height="wrap_content"
 			android:text="插入"
 			android:id="@+id/insert"
-			android:layout_marginLeft="10dp"/>
+			android:layout_marginLeft="10dp"
+			android:textStyle="bold"
+			android:textSize="15sp"/>
 
 	</LinearLayout>
 

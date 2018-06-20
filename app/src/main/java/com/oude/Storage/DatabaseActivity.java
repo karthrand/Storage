@@ -39,10 +39,10 @@ import android.database.DatabaseErrorHandler;
 public class DatabaseActivity extends AppCompatActivity
 {
     private DBListAdapter adapter;
-    
+
     private MyDatabaseHelper itemdb;
     //用item表的name作为筛选条件，因此需要保证item的name的唯一性
-    private String item_name,item_type,item_explain;
+    private String item_name,item_type,item_explain,item_source;
     private Float item_price,item_weight;
     //存储取出来的item名字
     private List<ItemsList> list = new ArrayList<>();
@@ -62,7 +62,7 @@ public class DatabaseActivity extends AppCompatActivity
         bn_query = (Button) findViewById(R.id.query);
         bn_insert = (Button) findViewById(R.id.insert);
         //下拉表绑定
-        sp_fixed =(Spinner) findViewById(R.id.databaseSpinner1);
+        sp_fixed = (Spinner) findViewById(R.id.databaseSpinner1);
         sp_change = (Spinner) findViewById(R.id.databaseSpinner2);
         //下拉刷新绑定控件
         swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
@@ -73,7 +73,7 @@ public class DatabaseActivity extends AppCompatActivity
                     refreshItems();
                 }
             });
-       
+
         //创建数据库，并指定数据库文件名称和版本，完成初始化
         //数据库文件会自动在/data/data/<package name>/databases/目录下创建
         //如果item.db数据库已创建，不会重复调用MyDatabaseHelper的onCreate()方法创建
@@ -86,49 +86,22 @@ public class DatabaseActivity extends AppCompatActivity
         RecyclerView recycleView = (RecyclerView) findViewById(R.id.databaseRecyclerView1);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recycleView.setLayoutManager(layoutManager);
-        adapter =new DBListAdapter(list);
+        adapter = new DBListAdapter(list);
         recycleView.setAdapter(adapter);
-        
+
         //下拉表
         //父下拉表，下拉内容固定
         String[] fix =  this.getResources().getStringArray(R.array.spinner_chose);
-        adapter_fixed = new ArrayAdapter<String>(this, R.layout.spinner_item,fix);
+        adapter_fixed = new ArrayAdapter<String>(this, R.layout.spinner_item, fix);
         adapter_fixed.setDropDownViewResource(R.layout.spinner_down);
         sp_fixed.setAdapter(adapter_fixed);
-        
-        
-        sp_fixed.setOnItemSelectedListener(new OnItemSelectedListener(){
+        sp_fixed.setOnItemSelectedListener(new spinnerListener());
 
-                @Override
-                public void onItemSelected(AdapterView<?> p1, View p2, int p3, long p4)
-                {
-                    switch(p3){
-                        case 0: 
-                            change =  DatabaseActivity.this.getResources().getStringArray(R.array.spinner_type);
-                            adapter_change = new ArrayAdapter<String>(DatabaseActivity.this, R.layout.spinner_item,change);
-                            adapter_change.setDropDownViewResource(R.layout.spinner_down);
-                            sp_change.setAdapter(adapter_change);
-                            
-                            break;
-                        case 1:
-                            change =  DatabaseActivity.this.getResources().getStringArray(R.array.spinner_source);
-                            adapter_change = new ArrayAdapter<String>(DatabaseActivity.this, R.layout.spinner_item,change);
-                            adapter_change.setDropDownViewResource(R.layout.spinner_down);
-                            sp_change.setAdapter(adapter_change);
-                            break;
-                    }
-                }
+        //查询按钮
+        bn_query.setOnClickListener(new queryListener());
+       //插入按钮
+       bn_insert.setOnClickListener(new insertListener());
 
-                @Override
-                public void onNothingSelected(AdapterView<?> p1)
-                {
-                    // TODO: Implement this method
-                }
-            });
-            
-            //查询按钮
-            bn_query.setOnClickListener(new queryListener());
-           
 
 
     }
@@ -141,6 +114,40 @@ public class DatabaseActivity extends AppCompatActivity
         itemdb.close();
 
     }
+
+    //下拉表关联实现
+    class spinnerListener implements OnItemSelectedListener
+    {
+
+        @Override
+        public void onItemSelected(AdapterView<?> p1, View p2, int p3, long p4)
+        {
+            switch (p3)
+            {
+                case 0: 
+                    change =  DatabaseActivity.this.getResources().getStringArray(R.array.spinner_type);
+                    adapter_change = new ArrayAdapter<String>(DatabaseActivity.this, R.layout.spinner_item, change);
+                    adapter_change.setDropDownViewResource(R.layout.spinner_down);
+                    sp_change.setAdapter(adapter_change);
+
+                    break;
+                case 1:
+                    change =  DatabaseActivity.this.getResources().getStringArray(R.array.spinner_source);
+                    adapter_change = new ArrayAdapter<String>(DatabaseActivity.this, R.layout.spinner_item, change);
+                    adapter_change.setDropDownViewResource(R.layout.spinner_down);
+                    sp_change.setAdapter(adapter_change);
+                    break;
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> p1)
+        {
+            // TODO: Implement this method
+        }
+
+    }
+
 
     //RecycleView的Adapter
     public class DBListAdapter extends RecyclerView.Adapter<DBListAdapter.ViewHolder>
@@ -196,13 +203,13 @@ public class DatabaseActivity extends AppCompatActivity
                         ItemsList itmsList = mItemsList.get(position);
                         switch (position)
                         {
-                            default: DeleteItem(itmsList.getName(),position);
+                            default: DeleteItem(itmsList.getName(), position);
                                 break;
                         }
                         return true;
                     }
                 });
-                
+
             return holder;
         }
 
@@ -219,12 +226,13 @@ public class DatabaseActivity extends AppCompatActivity
             return mItemsList.size();
         }
         //自定义删除操作
-        public void removeItem(int pos){
+        public void removeItem(int pos)
+        {
             mItemsList.remove(pos);
             notifyItemRemoved(pos);
         }
     }
-    
+
     //查询按钮实现
     class queryListener implements OnClickListener
     {
@@ -233,39 +241,144 @@ public class DatabaseActivity extends AppCompatActivity
         {
             String querytype = sp_fixed.getSelectedItem().toString();
             String subtype = sp_change.getSelectedItem().toString();
-            quert(querytype,subtype);
+            quert(querytype, subtype);
         }
     }
-    
+
     //插入按钮实现
     class insertListener implements OnClickListener
     {
         @Override
         public void onClick(View p1)
         {
+            AlertDialog.Builder builder= new AlertDialog.Builder(DatabaseActivity.this);
+            View detailView = LayoutInflater.from(DatabaseActivity.this).inflate(R.layout.itemdetails, null);
+            builder.setTitle(DatabaseActivity.this.getResources().getText(R.string.insert));
+            //使用自定义xml
+            builder.setView(detailView);
+            //打开数据库
+            final SQLiteDatabase  db = itemdb.getReadableDatabase();
+            //详情页面view加载和控件绑定
+            final EditText name = detailView.findViewById(R.id.item_name);
+            final EditText source = detailView.findViewById(R.id.item_source);
+            final EditText type = detailView.findViewById(R.id.item_type);
+            final EditText price = detailView.findViewById(R.id.item_price);
+            final EditText weight = detailView.findViewById(R.id.item_weight);
+            final EditText explain = detailView.findViewById(R.id.item_explain);
+
+            //修改数据库中取出数据后的字体大小和风格，尽量与旁边的TextView显示风格对齐
+            List<EditText> ets = new LinkedList<EditText>();
+            ets.add(name);
+            ets.add(source);
+            ets.add(type);
+            ets.add(price);
+            ets.add(weight);
+            ets.add(explain);
+            for (int i=0;i < ets.size();i++)
+            {
+                ets.get(i).setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
+                ets.get(i).setTypeface(Typeface.DEFAULT_BOLD);
+            }
+            
+
+            //取消按钮和修改按钮，按钮的值都写在string文件中，此处使用java方式获取
+            builder.setPositiveButton(DatabaseActivity.this.getResources().getText(R.string.cancel), new DialogInterface.OnClickListener(){
+
+                    @Override
+                    public void onClick(DialogInterface p1, int p2)
+                    {
+                        Toast.makeText(DatabaseActivity.this, "新增已取消！", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+            builder.setNegativeButton(DatabaseActivity.this.getResources().getText(R.string.insert), new DialogInterface.OnClickListener(){
+
+                    @Override
+                    public void onClick(DialogInterface p1, int p2)
+                    {
+
+                        //获取EditText的值
+                        item_name = name.getText().toString();
+                        
+                        //查询新增资料名称是否重复
+                        Cursor cursor = db.query("item", null, "name=?", new String[]{item_name}, null, null, null);
+                        cursor.moveToFirst();
+                        if (cursor.moveToPosition(0) != false)
+                        {
+                            Toast.makeText(DatabaseActivity.this, "相同名称已存在，请更换名称！", Toast.LENGTH_SHORT).show();
+                            cursor.close();
+                        }
+                        else
+                        {
+                            //name不冲突后获取
+                            item_source = source.getText().toString();
+                            item_type = type.getText().toString();
+                            //输入空时赋予0,否则报错
+                            if (price.getText().toString().equals("")){
+                                item_price =(float)0;
+                            }else{
+                                item_price = Float.parseFloat(price.getText().toString());
+                            }
+                            if (weight.getText().toString().equals("")){
+                                item_weight =(float)0;
+                            }else{
+                                item_weight= Float.parseFloat(weight.getText().toString());
+                            }
+                            item_explain = explain.getText().toString();
+                            //更新数据库
+                            ContentValues insertValue = new ContentValues();
+                            insertValue.put("name", item_name);
+                            insertValue.put("source", item_source);
+                            insertValue.put("type", item_type);
+                            insertValue.put("price", item_price);
+                            insertValue.put("weight", item_weight);
+                            insertValue.put("explain", item_explain);
+                            db.insert("item", null, insertValue);
+                            insertValue.clear();
+                            Toast.makeText(DatabaseActivity.this, "新数据插入成功!", Toast.LENGTH_SHORT).show();
+                            cursor.close();
+                        }
+                        
+
+                    }
+                });
+
+            builder.show();
+
 
         }
     }
-    
-    private void quert(String querytype,String subtype){
+
+    //查询功能的实现
+    private void quert(String querytype, String subtype)
+    {
         list.clear();
         Cursor cursor = null;
         SQLiteDatabase  quertdb = itemdb.getReadableDatabase();
         //根据父下拉表筛选类型
-        if(querytype.equals("物品类别")){
-            if (subtype.equals("所有类别")){
-             cursor = quertdb.query("item", null, null, null, null, null, null);
-            }else{
+        if (querytype.equals("物品类别"))
+        {
+            if (subtype.equals("所有类别"))
+            {
+                cursor = quertdb.query("item", null, null, null, null, null, null);
+            }
+            else
+            {
                 cursor = quertdb.query("item", null, "type=?", new String[]{subtype}, null, null, null);
             }
-        }else{
-            if (subtype.equals("所有来源")){
+        }
+        else
+        {
+            if (subtype.equals("所有来源"))
+            {
                 cursor = quertdb.query("item", null, null, null, null, null, null);
-            }else{
+            }
+            else
+            {
                 cursor = quertdb.query("item", null, "source=?", new String[]{subtype}, null, null, null);
             }
         }
-        
+
         //根据查询，取出数据
         cursor.moveToFirst();
         if (cursor.moveToPosition(0) != true)
@@ -283,14 +396,11 @@ public class DatabaseActivity extends AppCompatActivity
         }
         //刷新下
         adapter.notifyDataSetChanged();
-        
+
     }
 
 
-    
-    
-    
-    //获取所有items资源并显示
+    //获取所有items资源并显示，初始化
     private void initItems()
     {
         list.clear();
@@ -333,13 +443,14 @@ public class DatabaseActivity extends AppCompatActivity
         }
 
     }
-    
-    //长按删除
-    public void DeleteItem(final String deleteName,final int pos){
+
+    //item长按删除功能
+    public void DeleteItem(final String deleteName, final int pos)
+    {
         AlertDialog.Builder builder= new AlertDialog.Builder(DatabaseActivity.this);
         builder.setTitle("删除");
         builder.setIcon(R.drawable.timg);
-        builder.setMessage("确定删除" + deleteName +"吗？");
+        builder.setMessage("确定删除" + deleteName + "吗？");
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener(){
 
                 @Override
@@ -347,12 +458,12 @@ public class DatabaseActivity extends AppCompatActivity
                 {
                     //数据库及Recycle中都需要进行删除
                     final SQLiteDatabase  db = itemdb.getReadableDatabase();
-                    db.delete("item","name=?",new String[]{deleteName});
+                    db.delete("item", "name=?", new String[]{deleteName});
                     adapter.removeItem(pos);
                 }
             });
-            
-            
+
+
         builder.setNegativeButton("取消", new DialogInterface.OnClickListener(){
 
                 @Override
@@ -363,8 +474,7 @@ public class DatabaseActivity extends AppCompatActivity
         builder.show();
     }
 
-
-    //单击后查看详情
+    //item单击后查看详情
     public void Detail()
     {
 
@@ -375,6 +485,7 @@ public class DatabaseActivity extends AppCompatActivity
         builder.setView(detailView);
         //详情页面view加载和控件绑定
         final EditText name = detailView.findViewById(R.id.item_name);
+        final EditText source = detailView.findViewById(R.id.item_source);
         final EditText type = detailView.findViewById(R.id.item_type);
         final EditText price = detailView.findViewById(R.id.item_price);
         final EditText weight = detailView.findViewById(R.id.item_weight);
@@ -383,6 +494,7 @@ public class DatabaseActivity extends AppCompatActivity
         //修改数据库中取出数据后的字体大小和风格，尽量与旁边的TextView显示风格对齐
         List<EditText> ets = new LinkedList<EditText>();
         ets.add(name);
+        ets.add(source);
         ets.add(type);
         ets.add(price);
         ets.add(weight);
@@ -400,12 +512,14 @@ public class DatabaseActivity extends AppCompatActivity
         {
             do{
                 //遍历获取数据库中的值并给EditText赋值
+                item_source = cursor.getString(cursor.getColumnIndex("source"));
                 item_type = cursor.getString(cursor.getColumnIndex("type"));
                 item_price = cursor.getFloat(cursor.getColumnIndex("price"));
                 item_weight = cursor.getFloat(cursor.getColumnIndex("weight"));
                 item_explain = cursor.getString(cursor.getColumnIndex("explain"));
 
                 name.setText(item_name);
+                source.setText(item_source);
                 type.setText(item_type);               
                 price.setText(String.valueOf(item_price));
                 weight.setText(String.valueOf(item_weight));
@@ -413,12 +527,13 @@ public class DatabaseActivity extends AppCompatActivity
                 //存储在SharedPreferences中，用于在后面进行校验
                 SharedPreferences.Editor editor =  getSharedPreferences("items", MODE_PRIVATE).edit();               
                 editor.putString("item_name", item_name);
+                editor.putString("item_source", item_source);
                 editor.putString("item_type", item_type);
                 editor.putFloat("item_price", item_price);
                 editor.putFloat("item_weight", item_weight);
                 editor.putString("item_explain", item_explain);
                 editor.apply();  
-               
+
 
             }while(cursor.moveToNext());
         }
@@ -442,6 +557,7 @@ public class DatabaseActivity extends AppCompatActivity
                     //修改检查，检查是否有更新
                     //重新获取EditText的值
                     item_name = name.getText().toString();
+                    item_source = source.getText().toString();
                     item_type = type.getText().toString();
                     item_price = Float.parseFloat(price.getText().toString());
                     item_weight = Float.parseFloat(weight.getText().toString());
@@ -449,6 +565,7 @@ public class DatabaseActivity extends AppCompatActivity
                     //将新的值和之前保存的比较，无改变则不更新数据库
                     SharedPreferences sp = getSharedPreferences("items", MODE_PRIVATE);
                     if (item_name.equals(sp.getString("item_name", "")) && 
+                        item_source.equals(sp.getString("item_source", "")) && 
                         item_type.equals(sp.getString("item_type", ""))  &&
                         Math.abs(item_price - sp.getFloat("item_price", 0)) < 0.00001  &&
                         Math.abs(item_weight - sp.getFloat("item_weight", 0)) < 0.00001 &&
@@ -461,11 +578,13 @@ public class DatabaseActivity extends AppCompatActivity
                         //更新数据库
                         ContentValues updateValue = new ContentValues();
                         updateValue.put("name", item_name);
+                        updateValue.put("source", item_source);
                         updateValue.put("type", item_type);
                         updateValue.put("price", item_price);
                         updateValue.put("weight", item_weight);
                         updateValue.put("explain", item_explain);
                         db.update("item", updateValue, "name=?", new String[]{sp.getString("item_name", "")});
+                        updateValue.clear();
                     }
 
                 }
@@ -474,15 +593,19 @@ public class DatabaseActivity extends AppCompatActivity
     }
 
     //下拉刷新的实现
-    private void refreshItems(){
+    private void refreshItems()
+    {
         new Thread(new Runnable(){
                 @Override
                 public void run()
                 {
-                    try {
+                    try
+                    {
                         //因为本地刷新速度太快看不到效果，延迟下
                         Thread.sleep(500);
-                    }catch (InterruptedException e){
+                    }
+                    catch (InterruptedException e)
+                    {
                         e.printStackTrace();
                     }
                     runOnUiThread(new Runnable(){
@@ -494,10 +617,10 @@ public class DatabaseActivity extends AppCompatActivity
                                 adapter.notifyDataSetChanged();
                                 swipeRefresh.setRefreshing(false);
                             }
-                    });
+                        });
                 }
-            
-        }).start();
+
+            }).start();
     }
 
 

@@ -6,6 +6,7 @@
     <string name="sp">SharedPreferences</string>
     <string name="db">Database</string>
     <string name="item_name">名称:</string>
+    <string name="item_source">来源:</string>
     <string name="item_type">类型:</string>
     <string name="item_price">价格:</string>
     <string name="item_weight">重量:</string>
@@ -13,6 +14,7 @@
     <string name="cancel">取消</string>
     <string name="modify">修改</string>
     <string name="detail">详情</string>
+    <string name="insert">插入</string>
     
 
 </resources>
