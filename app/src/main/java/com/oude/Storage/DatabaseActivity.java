@@ -28,6 +28,13 @@ import java.util.LinkedList;
 import java.math.BigDecimal;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View.OnLongClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.ListView.FixedViewInfo;
+import android.widget.Spinner;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.AdapterView;
+import android.widget.Adapter;
+import android.database.DatabaseErrorHandler;
 
 public class DatabaseActivity extends AppCompatActivity
 {
@@ -41,11 +48,18 @@ public class DatabaseActivity extends AppCompatActivity
     private List<ItemsList> list = new ArrayList<>();
     //下拉刷新
     private SwipeRefreshLayout swipeRefresh;
+    //下拉表
+    private Spinner sp_fixed,sp_change;
+    private ArrayAdapter<String> adapter_fixed,adapter_change;
+    String[] change;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.database);
+        //下拉表绑定
+        sp_fixed =(Spinner) findViewById(R.id.databaseSpinner1);
+        sp_change = (Spinner) findViewById(R.id.databaseSpinner2);
         //下拉刷新绑定控件
         swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
@@ -70,6 +84,43 @@ public class DatabaseActivity extends AppCompatActivity
         recycleView.setLayoutManager(layoutManager);
         adapter =new DBListAdapter(list);
         recycleView.setAdapter(adapter);
+        
+        //下拉表
+        //父下拉表，下拉内容固定
+        String[] fix =  this.getResources().getStringArray(R.array.spinner_chose);
+        adapter_fixed = new ArrayAdapter<String>(this, R.layout.spinner_item,fix);
+        adapter_fixed.setDropDownViewResource(R.layout.spinner_down);
+        sp_fixed.setAdapter(adapter_fixed);
+        
+        
+        sp_fixed.setOnItemSelectedListener(new OnItemSelectedListener(){
+
+                @Override
+                public void onItemSelected(AdapterView<?> p1, View p2, int p3, long p4)
+                {
+                    switch(p3){
+                        case 0: 
+                            change =  DatabaseActivity.this.getResources().getStringArray(R.array.spinner_type);
+                            adapter_change = new ArrayAdapter<String>(DatabaseActivity.this, R.layout.spinner_item,change);
+                            adapter_change.setDropDownViewResource(R.layout.spinner_down);
+                            sp_change.setAdapter(adapter_change);
+                            
+                            break;
+                        case 1:
+                            change =  DatabaseActivity.this.getResources().getStringArray(R.array.spinner_source);
+                            adapter_change = new ArrayAdapter<String>(DatabaseActivity.this, R.layout.spinner_item,change);
+                            adapter_change.setDropDownViewResource(R.layout.spinner_down);
+                            sp_change.setAdapter(adapter_change);
+                            break;
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> p1)
+                {
+                    // TODO: Implement this method
+                }
+            });
 
 
     }
@@ -286,6 +337,7 @@ public class DatabaseActivity extends AppCompatActivity
                 editor.putFloat("item_weight", item_weight);
                 editor.putString("item_explain", item_explain);
                 editor.apply();  
+               
 
             }while(cursor.moveToNext());
         }
