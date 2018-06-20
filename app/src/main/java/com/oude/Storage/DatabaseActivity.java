@@ -52,11 +52,15 @@ public class DatabaseActivity extends AppCompatActivity
     private Spinner sp_fixed,sp_change;
     private ArrayAdapter<String> adapter_fixed,adapter_change;
     String[] change;
+    private Button bn_query,bn_insert;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.database);
+        //按钮绑定
+        bn_query = (Button) findViewById(R.id.query);
+        bn_insert = (Button) findViewById(R.id.insert);
         //下拉表绑定
         sp_fixed =(Spinner) findViewById(R.id.databaseSpinner1);
         sp_change = (Spinner) findViewById(R.id.databaseSpinner2);
@@ -121,6 +125,10 @@ public class DatabaseActivity extends AppCompatActivity
                     // TODO: Implement this method
                 }
             });
+            
+            //查询按钮
+            bn_query.setOnClickListener(new queryListener());
+           
 
 
     }
@@ -216,8 +224,72 @@ public class DatabaseActivity extends AppCompatActivity
             notifyItemRemoved(pos);
         }
     }
+    
+    //查询按钮实现
+    class queryListener implements OnClickListener
+    {
+        @Override
+        public void onClick(View p1)
+        {
+            String querytype = sp_fixed.getSelectedItem().toString();
+            String subtype = sp_change.getSelectedItem().toString();
+            quert(querytype,subtype);
+        }
+    }
+    
+    //插入按钮实现
+    class insertListener implements OnClickListener
+    {
+        @Override
+        public void onClick(View p1)
+        {
+
+        }
+    }
+    
+    private void quert(String querytype,String subtype){
+        list.clear();
+        Cursor cursor = null;
+        SQLiteDatabase  quertdb = itemdb.getReadableDatabase();
+        //根据父下拉表筛选类型
+        if(querytype.equals("物品类别")){
+            if (subtype.equals("所有类别")){
+             cursor = quertdb.query("item", null, null, null, null, null, null);
+            }else{
+                cursor = quertdb.query("item", null, "type=?", new String[]{subtype}, null, null, null);
+            }
+        }else{
+            if (subtype.equals("所有来源")){
+                cursor = quertdb.query("item", null, null, null, null, null, null);
+            }else{
+                cursor = quertdb.query("item", null, "source=?", new String[]{subtype}, null, null, null);
+            }
+        }
+        
+        //根据查询，取出数据
+        cursor.moveToFirst();
+        if (cursor.moveToPosition(0) != true)
+        {  
+            Toast.makeText(this, "查询为空!", Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            do{
+                String name=cursor.getString(cursor.getColumnIndex("name"));
+                ItemsList  item =new ItemsList(name);
+                list.add(item);
+            }while (cursor.moveToNext());
+            cursor.close();
+        }
+        //刷新下
+        adapter.notifyDataSetChanged();
+        
+    }
 
 
+    
+    
+    
     //获取所有items资源并显示
     private void initItems()
     {
@@ -237,6 +309,15 @@ public class DatabaseActivity extends AppCompatActivity
             values.put("price", 2.1);
             values.put("weight", 2);
             values.put("explain", "普通的背包");
+            values.put("source", "玩家手册");
+            sqlLite.insert("item", null, values);
+            values.clear();
+            values.put("name", "斩龙巨剑");
+            values.put("type", "技能职业");
+            values.put("price", 2.1);
+            values.put("weight", 2);
+            values.put("explain", "瞎编的");
+            values.put("source", "瞎编");
             sqlLite.insert("item", null, values);
             values.clear();
             Toast.makeText(this, "无Item，已自动添加初始，请下拉刷新!", Toast.LENGTH_SHORT).show();

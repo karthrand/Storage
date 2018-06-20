@@ -18,7 +18,7 @@
 			android:textSize="15sp"
 			android:textStyle="bold"/>
 
-		<android.support.v7.widget.AppCompatSpinner
+		<Spinner
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:spinnerMode="dropdown"
@@ -28,14 +28,14 @@
 			android:overlapAnchor="false"
 			android:dropDownHorizontalOffset="-50dp"/>
 
-		<android.support.v7.widget.AppCompatSpinner
+		<Spinner
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:spinnerMode="dropdown"
-            android:popupBackground="@android:color/white"
-            android:paddingLeft="5dp"
+			android:popupBackground="@android:color/white"
+			android:paddingLeft="5dp"
 			android:dropDownHorizontalOffset="-50dp"
-            android:overlapAnchor="false"
+			android:overlapAnchor="false"
 			android:id="@+id/databaseSpinner2"/>
 
 	</LinearLayout>
@@ -50,7 +50,25 @@
 		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="操作:"/>
+			android:text="操作:"
+			android:textSize="15sp"
+			android:textStyle="bold"/>
+
+		<Button
+			style="?android:attr/borderlessButtonStyle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="查询"
+			android:layout_marginLeft="10dp"
+			android:id="@+id/query"/>
+
+		<Button
+			style="?android:attr/borderlessButtonStyle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="插入"
+			android:id="@+id/insert"
+			android:layout_marginLeft="10dp"/>
 
 	</LinearLayout>
 

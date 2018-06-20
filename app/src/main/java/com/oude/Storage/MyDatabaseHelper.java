@@ -17,6 +17,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper
      + "type text,"
      + "price real,"
      + "weight real,"
+     + "source text,"
      + "explain text)";
     //构造函数
     public MyDatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version)
