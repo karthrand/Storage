@@ -99,8 +99,8 @@ public class DatabaseActivity extends AppCompatActivity
 
         //查询按钮
         bn_query.setOnClickListener(new queryListener());
-       //插入按钮
-       bn_insert.setOnClickListener(new insertListener());
+        //插入按钮
+        bn_insert.setOnClickListener(new insertListener());
 
 
 
@@ -279,7 +279,7 @@ public class DatabaseActivity extends AppCompatActivity
                 ets.get(i).setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
                 ets.get(i).setTypeface(Typeface.DEFAULT_BOLD);
             }
-            
+
 
             //取消按钮和修改按钮，按钮的值都写在string文件中，此处使用java方式获取
             builder.setPositiveButton(DatabaseActivity.this.getResources().getText(R.string.cancel), new DialogInterface.OnClickListener(){
@@ -299,46 +299,58 @@ public class DatabaseActivity extends AppCompatActivity
 
                         //获取EditText的值
                         item_name = name.getText().toString();
-                        
-                        //查询新增资料名称是否重复
-                        Cursor cursor = db.query("item", null, "name=?", new String[]{item_name}, null, null, null);
-                        cursor.moveToFirst();
-                        if (cursor.moveToPosition(0) != false)
+                        if (item_name.equals(""))
                         {
-                            Toast.makeText(DatabaseActivity.this, "相同名称已存在，请更换名称！", Toast.LENGTH_SHORT).show();
-                            cursor.close();
+                            Toast.makeText(DatabaseActivity.this,"名称不能为空",Toast.LENGTH_SHORT).show();
+
                         }
                         else
                         {
-                            //name不冲突后获取
-                            item_source = source.getText().toString();
-                            item_type = type.getText().toString();
-                            //输入空时赋予0,否则报错
-                            if (price.getText().toString().equals("")){
-                                item_price =(float)0;
-                            }else{
-                                item_price = Float.parseFloat(price.getText().toString());
+                            //查询新增资料名称是否重复
+                            Cursor cursor = db.query("item", null, "name=?", new String[]{item_name}, null, null, null);
+                            cursor.moveToFirst();
+                            if (cursor.moveToPosition(0) != false)
+                            {
+                                Toast.makeText(DatabaseActivity.this, "相同名称已存在，请更换名称！", Toast.LENGTH_SHORT).show();
+                                cursor.close();
                             }
-                            if (weight.getText().toString().equals("")){
-                                item_weight =(float)0;
-                            }else{
-                                item_weight= Float.parseFloat(weight.getText().toString());
+                            else
+                            {
+                                //name不冲突后获取
+                                item_source = source.getText().toString();
+                                item_type = type.getText().toString();
+                                //输入空时赋予0,否则报错
+                                if (price.getText().toString().equals(""))
+                                {
+                                    item_price = (float)0;
+                                }
+                                else
+                                {
+                                    item_price = Float.parseFloat(price.getText().toString());
+                                }
+                                if (weight.getText().toString().equals(""))
+                                {
+                                    item_weight = (float)0;
+                                }
+                                else
+                                {
+                                    item_weight = Float.parseFloat(weight.getText().toString());
+                                }
+                                item_explain = explain.getText().toString();
+                                //更新数据库
+                                ContentValues insertValue = new ContentValues();
+                                insertValue.put("name", item_name);
+                                insertValue.put("source", item_source);
+                                insertValue.put("type", item_type);
+                                insertValue.put("price", item_price);
+                                insertValue.put("weight", item_weight);
+                                insertValue.put("explain", item_explain);
+                                db.insert("item", null, insertValue);
+                                insertValue.clear();
+                                Toast.makeText(DatabaseActivity.this, "新数据插入成功!", Toast.LENGTH_SHORT).show();
+                                cursor.close();
                             }
-                            item_explain = explain.getText().toString();
-                            //更新数据库
-                            ContentValues insertValue = new ContentValues();
-                            insertValue.put("name", item_name);
-                            insertValue.put("source", item_source);
-                            insertValue.put("type", item_type);
-                            insertValue.put("price", item_price);
-                            insertValue.put("weight", item_weight);
-                            insertValue.put("explain", item_explain);
-                            db.insert("item", null, insertValue);
-                            insertValue.clear();
-                            Toast.makeText(DatabaseActivity.this, "新数据插入成功!", Toast.LENGTH_SHORT).show();
-                            cursor.close();
                         }
-                        
 
                     }
                 });
