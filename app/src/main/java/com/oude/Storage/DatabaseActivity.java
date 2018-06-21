@@ -643,6 +643,15 @@ public class DatabaseActivity extends AppCompatActivity
 
                 }
             });
+            
+        builder.setNeutralButton(this.getResources().getText(R.string.buy), new DialogInterface.OnClickListener(){
+
+                @Override
+                public void onClick(DialogInterface p1, int p2)
+                {
+                    Toast.makeText(DatabaseActivity.this,"待实现！",Toast.LENGTH_SHORT).show();
+                }
+            });
         builder.show();
     }
 
