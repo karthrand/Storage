@@ -104,8 +104,6 @@ public class DatabaseActivity extends AppCompatActivity
         //插入按钮
         bn_insert.setOnClickListener(new insertListener());
 
-
-
     }
 
     @Override
@@ -186,6 +184,7 @@ public class DatabaseActivity extends AppCompatActivity
 
                         int position = holder.getAdapterPosition();
                         ItemsList itmsList = mItemsList.get(position);
+                        
                         //在初始化详情之前获取当前列的name
                         item_name = itmsList.getName();
                         switch (position)
@@ -210,8 +209,8 @@ public class DatabaseActivity extends AppCompatActivity
                         }
                         return true;
                     }
-                });
-
+                });            
+   
             return holder;
         }
 
@@ -220,6 +219,7 @@ public class DatabaseActivity extends AppCompatActivity
         {
             ItemsList itemsList = mItemsList.get(position);
             holder.itemsName.setText(itemsList.getName());
+            
         }
 
         @Override
@@ -232,7 +232,8 @@ public class DatabaseActivity extends AppCompatActivity
         {
             mItemsList.remove(pos);
             notifyItemRemoved(pos);
-        }
+        }      
+        
     }
 
     //查询按钮实现
