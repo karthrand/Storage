@@ -18,7 +18,7 @@
 			android:textSize="15sp"
 			android:textStyle="bold"/>
 
-		<Spinner
+		<android.support.v7.widget.AppCompatSpinner
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:spinnerMode="dropdown"
@@ -28,7 +28,7 @@
 			android:overlapAnchor="false"
 			android:dropDownHorizontalOffset="-50dp"/>
 
-		<Spinner
+		<android.support.v7.widget.AppCompatSpinner
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:spinnerMode="dropdown"

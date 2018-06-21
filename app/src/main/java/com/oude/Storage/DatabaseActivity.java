@@ -35,6 +35,8 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.AdapterView;
 import android.widget.Adapter;
 import android.database.DatabaseErrorHandler;
+import android.support.design.widget.Snackbar;
+import android.support.v7.widget.SnapHelper;
 
 public class DatabaseActivity extends AppCompatActivity
 {
@@ -203,7 +205,7 @@ public class DatabaseActivity extends AppCompatActivity
                         ItemsList itmsList = mItemsList.get(position);
                         switch (position)
                         {
-                            default: DeleteItem(itmsList.getName(), position);
+                            default: DeleteItem(itmsList.getName(), position,p1);
                                 break;
                         }
                         return true;
@@ -457,8 +459,9 @@ public class DatabaseActivity extends AppCompatActivity
     }
 
     //item长按删除功能
-    public void DeleteItem(final String deleteName, final int pos)
+    public void DeleteItem(final String deleteName, final int pos,final View view)
     {
+        
         AlertDialog.Builder builder= new AlertDialog.Builder(DatabaseActivity.this);
         builder.setTitle("删除");
         builder.setIcon(R.drawable.timg);
@@ -468,10 +471,48 @@ public class DatabaseActivity extends AppCompatActivity
                 @Override
                 public void onClick(DialogInterface p1, int p2)
                 {
-                    //数据库及Recycle中都需要进行删除
                     final SQLiteDatabase  db = itemdb.getReadableDatabase();
+                    //现将要删除的内容获取,以取消
+                    Cursor cursor = db.query("item", null, "name=?", new String[]{deleteName}, null, null, null);
+                    if (cursor.moveToFirst())
+                    {
+                        do{
+                            //遍历获取数据库中的值并给EditText赋值
+                            item_source = cursor.getString(cursor.getColumnIndex("source"));
+                            item_type = cursor.getString(cursor.getColumnIndex("type"));
+                            item_price = cursor.getFloat(cursor.getColumnIndex("price"));
+                            item_weight = cursor.getFloat(cursor.getColumnIndex("weight"));
+                            item_explain = cursor.getString(cursor.getColumnIndex("explain"));
+                        }while(cursor.moveToNext());
+                    }
+                    
+                    //数据库及Recycle中都需要进行删除
                     db.delete("item", "name=?", new String[]{deleteName});
                     adapter.removeItem(pos);
+                    
+                    Snackbar.make(view, "数据已删除", Snackbar.LENGTH_SHORT).setAction("撤销删除", new View.OnClickListener(){
+
+                            @Override
+                            public void onClick(View p1)
+                            {
+                                //重新插入数据
+                                //更新数据库
+                                ContentValues undoValue = new ContentValues();
+                                undoValue.put("name", deleteName);
+                                undoValue.put("source", item_source);
+                                undoValue.put("type", item_type);
+                                undoValue.put("price", item_price);
+                                undoValue.put("weight", item_weight);
+                                undoValue.put("explain", item_explain);
+                                db.insert("item", null, undoValue);
+                                undoValue.clear();
+                                Toast.makeText(DatabaseActivity.this, "删除已取消!", Toast.LENGTH_SHORT).show();
+                                refreshItems();
+                            }
+                    }).show(); 
+                    //关闭
+                    cursor.close();
+                    
                 }
             });
 

@@ -12,10 +12,12 @@
         <item>技能职业</item>
         <item>运输工具</item>
         <item>饮食住宿</item>
+        <item>玩家自设</item>
     </string-array>
     <string-array name="spinner_source">
         <item>所有来源</item>
         <item>玩家手册</item>
+        <item>玩家自设</item>
     </string-array>
 </resources>
     
